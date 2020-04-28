@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include <instream.h>
 #include <instream_buffer.h>
@@ -69,7 +70,7 @@ int article_id;
 //int task_manager::should_stop = FALSE;
 task_manager* thread_manager_ptr;
 
-#define BUFFER_SIZE (256* 1024 * 1024)
+#define BUFFER_SIZE (1 * 1024 * 1024)
 
 ANT_memory file_buffer(BUFFER_SIZE);
 
@@ -240,6 +241,7 @@ int main(int argc, char **argv)
 	int fix_mode = 0;
 
 	int use_wikipedia = 0;
+	bool use_pipe = FALSE;
 
 	task_manager manager;
 	thread_manager_ptr = &manager;
@@ -247,6 +249,11 @@ int main(int argc, char **argv)
 	for (; param < argc; ++param) {
 		char *opt;
 		if (argv[param][0] == '-') {
+			if (strlen(argv[param]) == 1) {
+				use_pipe = TRUE;
+				continue;
+			}
+
 			opt = argv[param] + 1;
 			if (strcmp(opt, "threads") == 0) {
 				++param;
@@ -260,15 +267,18 @@ int main(int argc, char **argv)
 				if (num > 1)
 					bucket_size = (num);
 			}
-			else if (strcmp(opt, "p") == 0) {
+			else if (strcmp(opt, "path") == 0) {
 				++param;
 				temp_path = (argv[param]);
 			}
 			else if (strcmp(opt, "fix") == 0) {
 				fix_mode = 1;
 			}
-			else if (strcmp(opt, "db") == 0) {
-				import_db = (argv[++param]);
+			else if (strcmp(opt, "pipe") == 0) {
+				use_pipe = TRUE;
+			}
+			else if (strcmp(opt, "lang") == 0) {
+				lang = (argv[++param]);
 			}
 			else if (strcmp(opt, "usewikipedia") == 0) {
 				use_wikipedia = 1;
@@ -289,33 +299,43 @@ int main(int argc, char **argv)
 	int file_count = 0;
 	int article_count = 0;
 
-	if (param >= argc /*|| import_db.length() == 0*/)
-		usage(argv[0]);
+	FILE* fp = stdin;
 
-	if (param < argc) {
-		title_file = argv[param++];
-		char *tmp = strdup(title_file);
-		char *file = basename(tmp);
-		char *pos = strchr(file, '-');
-		std::string root = string(file, pos - file);
-		lang = root.substr(0, root.size() - 4);
-		if (use_wikipedia) {
-			wiki_api::root = "wiki";
-			wiki_api::host = std::string("http://") + lang + ".wikipedia.org/";
-		}
-		else {
-			wiki_api::root = "/";
-			wiki_api::host = std::string("http://") + lang + "wiki";
-		}
-
-		if (import_db.length() == 0)
-			import_db = "wikipedia_" + lang;
-
-		wiki_api::initialize();
-		fprintf(stderr, "wiki api: %s\n", wiki_api::url_template.c_str());
-		free(tmp);
+	if (use_pipe || isatty(fileno(stdin))) {
+		/* code */
+		printf("Reading data from pipe");
+		title_file = "/dev/stdin";
 	}
+	else
+	{
+		if (param >= argc /*|| import_db.length() == 0*/)
+			usage(argv[0]);
 
+		if (param < argc) {
+			title_file = argv[param++];
+			char *tmp = strdup(title_file);
+			char *file = basename(tmp);
+			char *pos = strchr(file, '-');
+			std::string root = string(file, pos - file);
+			lang = root.substr(0, root.size() - 4);
+			if (use_wikipedia) {
+				wiki_api::root = "wiki";
+				wiki_api::host = std::string("http://") + lang + ".wikipedia.org/";
+			}
+			else {
+				wiki_api::root = "/";
+				wiki_api::host = std::string("http://") + lang + "wiki";
+			}
+
+			if (import_db.length() == 0)
+				import_db = "wikipedia_" + lang;
+
+			wiki_api::initialize();
+			fprintf(stderr, "wiki api: %s\n", wiki_api::url_template.c_str());
+			free(tmp);
+		}
+	}
+	
 
 	/*
 	 * set up worker function
@@ -359,9 +379,6 @@ int main(int argc, char **argv)
 	char *pos = strstr(xml_dump_start, "<page");
 	int start_len = 0;
 
-//	while (pos == NULL && head != NULL) {
-//
-//	}
 	delete in;
 
 	if (pos != NULL) {
