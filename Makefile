@@ -14,7 +14,7 @@ CC := g++
 
 CFLAGS  := -std=c++11 -I$(HEADERDIR) -I$(SRCDIR) -I/data/tyolab/code/antelope/source
 
-LDFLAGS := -lsqlite3 -ldl -lpthread -lz -lcurl -L/usr/local/lib
+LDFLAGS := -lsqlite3 -ldl -lpthread -lz -lcurl -lantelope_core
 
 ISRELEASE = 0
 ifeq ($(REL), 1)
@@ -35,8 +35,9 @@ SOURCES  := $(wildcard $(SRCDIR)/*.cpp)
 
 UTILS := $(wildcard $(UTILSDIR)/*.cpp)
 
-OBJECTS  := $(SOURCES:.cpp=.o) \
-			$(UTILS:.cpp=.o)
+OBJECTS  := $(SOURCES:.cpp=.o)
+
+UTILS_OBJS := $(UTILS:.cpp=.o)
 
 #MAINS := $(UTILS:.cpp=.o)
 
@@ -53,16 +54,16 @@ $(main): $(OBJECTS) $(UTILSDIR)/$(main).o
 	$(CC) -o $@ $^ $(LDFLAGS)
 	
 dump2indexable: $(OBJECTS) $(UTILSDIR)/dump2indexable.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -lantelope_core
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	
 dump2db: $(OBJECTS) $(UTILSDIR)/dump2db.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -lantelope_core	
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 	
 import_dump: $(OBJECTS) $(UTILSDIR)/import_dump.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -lantelope_core		
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) 	
 	
 dump2template: $(OBJECTS) $(UTILSDIR)/dump2template.o
-	$(CC) -o $@ $^ $(LDFLAGS) -lantelope_core
+	$(CC) -o $@ $^ $(LDFLAGS) 
 	
 merge_sqlite_db: $(OBJECTS) $(UTILSDIR)/merge_sqlite_db.o
 	$(CC) -o $@ $^ $(LDFLAGS)	
@@ -87,5 +88,5 @@ install: $(executables)
 	cp $(executables) /usr/local/bin/	
 
 clean:
-	\rm $(OBJECTS) $(executables)
+	\rm -rf $(OBJECTS) $(UTILS_OBJS) $(executables)
 

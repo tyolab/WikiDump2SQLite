@@ -193,7 +193,7 @@ const char *read_buffer(long size) {
 		else { // not a complete page
 			long bytes_written = tag_start - buffer;
 			long bytes_left = size - bytes_written;
-			memory_copy(buffer_page, tag_start, bytes_left);
+			memcpy(buffer_page, tag_start, bytes_left);
 			buffer_page[bytes_left] = '\0';
 
 			not_a_full_page = true;

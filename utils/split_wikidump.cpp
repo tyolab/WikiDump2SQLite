@@ -105,7 +105,7 @@ int main(int argc, char **argv)
 	/*
 	 * Step 2. copy read buffer to the compression buffer
 	 */
-	current = (char *)memory_copy(buffer_source, buffer, size);
+	current = (char *)memcpy(buffer_source, buffer, size);
 	current += size;
 	//++current;
 
@@ -139,13 +139,13 @@ int main(int argc, char **argv)
 					pos = pre;
 					long temp_size = pos - buffer;
 					long left_size = size - temp_size;
-					memory_copy(current, buffer, temp_size);
+					memcpy(current, buffer, temp_size);
 					current += temp_size;
-					memory_copy(current, root_tag_closed.c_str(), root_tag_closed.length());
+					memcpy(current, root_tag_closed.c_str(), (long)root_tag_closed.length());
 					current += root_tag_closed.length();
 					*current = '\0';
 
-					split_name = increase_file_num(split_name, true);
+					split_name = increase_file_num(split_name.c_str(), true);
 
 					// compress
 					compress_split(buffer_source, buffer_target, TARGET_BLOCK_SIZE + 1, bytes_read - left_size + root_tag_closed.length(), split_name);
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 					//memmove(buffer, pos, left_size);
 					strcpy(buffer_source, root_tag_open.c_str());
 					current = buffer_source + root_tag_open.length();
-					memory_copy(current, pos, left_size);
+					memcpy(current, pos, left_size);
 					current += left_size;
 					buffer[0] = '\0';
 					*current = '\0';
@@ -165,14 +165,14 @@ int main(int argc, char **argv)
 
 				continue;
 			}
-			memory_copy(current, buffer, size);
+			memcpy(current, buffer, size);
 			current += size;
 			//cout << buffer;
 		}
 
 		if (bytes_read > 0/**buffer_source != '\0'*/) {
 			*current = '\0';
-			split_name = increase_file_num(split_name, true);
+			split_name = increase_file_num(split_name.c_str(), true);
 			compress_split(buffer_source, buffer_target, TARGET_BLOCK_SIZE + 1, bytes_read, split_name);
 			//puts(buffer);
 		}
