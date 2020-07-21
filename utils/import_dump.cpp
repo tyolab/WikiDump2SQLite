@@ -301,7 +301,7 @@ int main(int argc, char **argv)
 
 	FILE* fp = stdin;
 
-	if (use_pipe || isatty(fileno(stdin))) {
+	if (use_pipe) {
 		/* code */
 		printf("Reading data from pipe");
 		title_file = "/dev/stdin";

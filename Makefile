@@ -14,7 +14,7 @@ CC := g++
 
 CFLAGS  := -std=c++11 -I$(HEADERDIR) -I$(SRCDIR) -I/data/tyolab/code/antelope/source
 
-LDFLAGS := -lsqlite3 -ldl -lpthread -lantelope_core -lz -lcurl
+LDFLAGS := -lsqlite3 -ldl -lpthread -lz -lcurl -L/usr/local/lib
 
 ISRELEASE = 0
 ifeq ($(REL), 1)
@@ -35,7 +35,8 @@ SOURCES  := $(wildcard $(SRCDIR)/*.cpp)
 
 UTILS := $(wildcard $(UTILSDIR)/*.cpp)
 
-OBJECTS  := $(SOURCES:.cpp=.o)
+OBJECTS  := $(SOURCES:.cpp=.o) \
+			$(UTILS:.cpp=.o)
 
 #MAINS := $(UTILS:.cpp=.o)
 
