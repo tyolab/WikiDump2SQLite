@@ -80,6 +80,8 @@ public:
 	long long length() {return length_; }
 
 	void *content() { return content_; }
+
+	bool exists();
 };
 
 #endif /* SYS_FILE_H_ */

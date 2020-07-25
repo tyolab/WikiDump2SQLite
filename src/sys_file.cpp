@@ -196,6 +196,10 @@ bool sys_file::exist(const char *name) {
 	return stat(&st, name) == 0;
 }
 
+bool sys_file::exists() {
+	return exist(this->name_);
+}
+
 size_t sys_file::size(const char *name)
 {
 	struct stat st;

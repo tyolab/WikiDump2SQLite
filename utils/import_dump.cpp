@@ -81,7 +81,7 @@ const char *xml_dump_end = "</mediawiki>";
 
 string temp_path = "/tmp";
 string import_db;
-string import_cmd_suffix = "php importDump.php --conf ";
+string import_cmd_suffix = "php importDump.php ";
 string lang;
 
 //class import_job : public task_thread {
@@ -170,7 +170,9 @@ void import(tyo::file* file) {
 	file->close();
 
 	// now run the importDump.php
-	string import_cmd = "export MEDIAWIKI_EXCLUDE_EXTENSIONS=true; " + import_cmd_suffix + "  /data/mediawiki/all/" + lang + "wiki/LocalSettings.php " + file->get_filename() + " " + import_db;
+	// string import_cmd = "export MEDIAWIKI_EXCLUDE_EXTENSIONS=true; " + import_cmd_suffix + "  /data/mediawiki/all/" + lang + "wiki/LocalSettings.php " + file->get_filename() + " " + import_db;
+	string import_cmd = "export MEDIAWIKI_EXCLUDE_EXTENSIONS=true; " + import_cmd_suffix + file->get_filename();
+	cout << "executing " << import_cmd << endl;
 	get_console_out(import_cmd);
 }
 
@@ -225,6 +227,12 @@ int main(int argc, char **argv)
 {
 	if (argc < 2) {
 		usage(argv[0]);
+	}
+
+	sys_file importPhp = "./importDump.php";
+	if (!importPhp.exists()) {
+		
+		exit(-1);
 	}
 
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
@@ -373,8 +381,8 @@ int main(int argc, char **argv)
 		in = new ANT_instream_buffer(&file_buffer, file_stream);
 	}
 	in->read(xml_dump_start, header_size);
-	string snippet(xml_dump_start, 100000);
-	std::cout << snippet << std::endl;
+	// string snippet(xml_dump_start, 100000);
+	// std::cout << snippet << std::endl;
 
 	char *pos = strstr(xml_dump_start, "<page");
 	int start_len = 0;
