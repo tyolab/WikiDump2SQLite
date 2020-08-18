@@ -76,6 +76,9 @@ void thread_manager::stop_database_thread() {
 void thread_manager::add_parsed_article(article* art_ptr) {
 	std::unique_lock<std::mutex> mlock(mutex_db);
 
+	if (!art_ptr)
+		fprintf(stderr, "reach the end of the article list");
+
 	int size = article_queue_parsed.size();
 	article_queue_parsed.push_back(art_ptr);
 

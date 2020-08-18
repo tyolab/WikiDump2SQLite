@@ -15,6 +15,7 @@
 using namespace std;
 
 //std::deque<article *> wiki_db::article_queue;
+int wiki_db::fix_mode = 0;
 
 wiki_db::wiki_db() : wiki_db("wikipedia.db")/*, db(), article_t(&db), history_t(&db)*/ {
 //	db_name = "wikipedia.db";
@@ -140,4 +141,12 @@ long wiki_db::get_something_changed() const {
 
 void wiki_db::set_something_changed(long somethingchanged) {
 	something_changed = somethingchanged;
+}
+
+void wiki_db::set_fix_mode(int mode) {
+	wiki_db::fix_mode = mode;
+}
+
+int wiki_db::get_fix_mode() {
+	return wiki_db::fix_mode;
 }

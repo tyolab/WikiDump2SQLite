@@ -147,9 +147,11 @@ int main(int argc, char **argv)
 
 	int param = 1;
 
-	int fix_mode = 0;
+	// int fix_mode = 0;
 
 	int use_wikipedia = 0;
+
+	int use_provided_site = 0;
 
 	for (; param < argc; ++param) {
 		char *opt;
@@ -170,12 +172,23 @@ int main(int argc, char **argv)
 					wiki_db_split::milestone = num * 10000;
 			}
 			else if (strcmp(opt, "fix") == 0) {
-				fix_mode = 1;
+				wiki_db::set_fix_mode(1);
 				thread_manager::multi_threads_mode = FALSE;
 			}
 			else if (strcmp(opt, "usewikipedia") == 0) {
 				use_wikipedia = 1;
 			}
+			else if (strcmp(opt, "wikisite") == 0) {
+				++param;
+				string site = argv[param];
+				wiki_api::host = site;
+				use_provided_site = TRUE;
+			}
+			else if (strcmp(opt, "wikiroot") == 0) {
+				++param;
+				string root = argv[param];
+				wiki_api::root = root;
+			}			
 			else {
 				fprintf(stderr, "unknown option: %s \n", argv[param]);
 				usage(argv[0]);
@@ -197,14 +210,17 @@ int main(int argc, char **argv)
 		char *tmp = strdup(title_file);
 		char *file = basename(tmp);
 		char *pos = strchr(file, '-');
-		std::string root = string(file, pos - file);
-		std::string lang = root.substr(0, root.size() - 4);
-		if (use_wikipedia) {
-			wiki_api::root = "wiki";
-			wiki_api::host = std::string("http://") + lang + ".wikipedia.org/";
+
+		if (!use_provided_site) {
+			std::string root = string(file, pos - file);
+			std::string lang = root.substr(0, root.size() - 4);
+			if (use_wikipedia) {
+				wiki_api::root = "wiki";
+				wiki_api::host = std::string("https://") + lang + ".wikipedia.org/";
+			}
+			else
+				wiki_api::root = "/" + root;
 		}
-		else
-			wiki_api::root = root;
 
 		wiki_api::initialize();
 		fprintf(stderr, "wiki api: %s\n", wiki_api::url_template.c_str());
@@ -216,7 +232,7 @@ int main(int argc, char **argv)
 	if (param < argc)
 		dbs.set_base_name(argv[param]);
 
-	if (fix_mode)
+	if (wiki_db::get_fix_mode())
 		dbs.set_up_to(-1);
 
 	dbs.load_db();
@@ -293,6 +309,8 @@ int main(int argc, char **argv)
 	 */
 	try {
 		int where_we_up_to = dbs.where_we_are_up_to();
+
+		// could be zero
 		int where_we_stop = dbs.where_we_stop();
 
 //		if (fix_mode && where_we_up_to == dbs.get_current_db()->get_min())
@@ -320,7 +338,7 @@ int main(int argc, char **argv)
 
 			article_id = atoi(current_file->filename);
 
-			if (file_count <= where_we_stop){
+			if (where_we_stop == 0 || file_count <= where_we_stop){
 
 				if (!do_it && file_count >= where_we_up_to)
 					do_it = TRUE;
@@ -329,7 +347,7 @@ int main(int argc, char **argv)
 	//				continue;
 
 					article *art_ptr = new article();
-					art_ptr->set_in_fix_mode(1);
+					art_ptr->set_in_fix_mode(wiki_db::get_fix_mode());
 					art_ptr->set_id(file_count); // the count is the id, don't use it in the dump2indexable, but ok here
 
 				/* only needs for once */
@@ -375,7 +393,7 @@ int main(int argc, char **argv)
 						delete art_ptr;
 					}
 
-					if (fix_mode) {
+					if (wiki_db::get_fix_mode()) {
 						do_it = FALSE;
 						if (!thread_manager::multi_threads_mode || thread_manager::instance().has_file_updated(file_count))
 							while (dbs.get_current_db() != 0 && (where_we_up_to = dbs.get_current_db()->get_article_table()->get_last_update()) == 0)

@@ -45,6 +45,8 @@ private:
 
 	long something_changed;
 
+	static int fix_mode;
+
 public:
 	wiki_db();
 	wiki_db(const char *db_name);
@@ -128,6 +130,9 @@ public:
 	int get_how_many_left() const {
 		return how_many_left;
 	}
+
+	static void set_fix_mode(int mode);
+	static int get_fix_mode();
 
 	long get_something_changed() const;
 	void set_something_changed(long somethingchanged);

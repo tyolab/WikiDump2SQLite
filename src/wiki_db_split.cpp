@@ -228,7 +228,10 @@ void wiki_db_split::create_new_db() {
 }
 
 void wiki_db_split::check_if_switching_db_needed(article* art_ptr) {
-	if (art_ptr->get_id() >= current->get_max_not_redirect()) {
+	// the max id of the articles in the database which is not a rediect entry
+	// and article id has to be greater than zero
+	int max_id = current->get_max_not_redirect();
+	if (max_id > 0 && art_ptr->get_id() >= max_id) {
 		current->get_history_table()->save(art_ptr->get_id(), art_ptr->get_article_id(), art_ptr->get_title().c_str());
 
 		switch_db();

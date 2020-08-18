@@ -23,6 +23,26 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "Dump2db - Get all Wikipedia pages and save them into sqlite db",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/dump2db",
+            "args": ["-thread", "12", "-wikisite", "http://arwiki.tyo.com.au", "-wikiroot", "/wiki/", "../arwiki-20200420-pages-articles-multistream.xml.bz2"],
+            "stopAtEntry": false,
+            //"cwd": "${workspaceFolder}",
+            "cwd": "/data2/wikipedia/arwiki/2020",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }

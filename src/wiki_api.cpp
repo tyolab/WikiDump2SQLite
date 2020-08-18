@@ -29,8 +29,8 @@ const std::string wiki_api::URL_TEMPLATE = "api.php?action=mobileview&redirect=y
 		"&format=json&sectionprop=toclevel|level|line&noheadings=yes"
 		"&page=";
 
-std::string wiki_api::host = "http://localhost/";
-std::string wiki_api::root = "w";
+std::string wiki_api::host = "http://localhost";
+std::string wiki_api::root = "/w";
 std::string wiki_api::url_template = host + root + URL_TEMPLATE;
 
 wiki_api::wiki_api() {
