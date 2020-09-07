@@ -65,6 +65,7 @@ public:
 	virtual ~table_article();
 
 	void insert(article *art_ptr);
+	void insert2(article *art_ptr);
 
 	int get_max_id();
 	int get_min_id();

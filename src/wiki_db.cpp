@@ -123,7 +123,7 @@ void wiki_db::update_article(article *art_ptr) {
 }
 
 void wiki_db::insert_article(article *art_ptr) {
-	article_t->insert(art_ptr);
+	article_t->insert2(art_ptr);
 }
 
 void wiki_db::detect() {

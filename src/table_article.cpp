@@ -134,7 +134,8 @@ void table_article::insert(article* art_ptr) {
 
     }
     else {
-    	blobAbs = strnew(art_ptr->get_abstract());
+		if (art_ptr->get_abstract())
+    		blobAbs = strnew(art_ptr->get_abstract());
     	blobArticle = strnew(art_ptr->get_article());
     }
 
@@ -197,6 +198,25 @@ void table_article::update_content(int article_id, const void* content,
     rc = db->bind_int(prepStmt, 2, redirect);
 
     rc = db->bind_int(prepStmt, 3, article_id);
+
+    db->execute(prepStmt);
+}
+
+void table_article::insert2(article* art_ptr) {
+
+	sqlite3_stmt *prepStmt = NULL;
+
+    int rc;
+
+    prepStmt = db->prepare_statment(SQL_INSERT_V2.c_str());
+
+	 rc = db->bind_int(prepStmt, 1, art_ptr->get_id());
+
+	 rc = db->bind_int(prepStmt, 2, art_ptr->get_article_id());
+
+    rc = db->bind_blob(prepStmt, 3, art_ptr->get_article(), art_ptr->get_article_len());
+
+    rc = db->bind_int(prepStmt, 4, art_ptr->is_redirect());
 
     db->execute(prepStmt);
 }
