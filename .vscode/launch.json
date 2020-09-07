@@ -29,12 +29,12 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/dump2db",
-            "args": ["-thread", "12", "-wikisite", "http://arwiki.tyo.com.au", "-wikiroot", "/wiki/", "../arwiki-20200420-pages-articles-multistream.xml.bz2"],
+            "args": ["-thread", "12", "-milestone", "100", "-batch", "1", "-wikisite", "http://arwiki.tyo.com.au", "-wikiroot", "/wiki/", "../arwiki-20200420-pages-articles-multistream.xml.bz2"],
             "stopAtEntry": false,
             //"cwd": "${workspaceFolder}",
             "cwd": "/data2/wikipedia/arwiki/2020",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "gdb",
             "setupCommands": [
                 {

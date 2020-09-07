@@ -122,6 +122,10 @@ void wiki_db::update_article(article *art_ptr) {
 	article_t->update_content(art_ptr->get_article_id(), blob, blob_len);
 }
 
+void wiki_db::insert_article(article *art_ptr) {
+	article_t->insert(art_ptr);
+}
+
 void wiki_db::detect() {
 	max = article_t->get_max_id();
 	min = article_t->get_min_id();

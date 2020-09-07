@@ -86,6 +86,7 @@ public:
 	void end_transaction();
 
 	void update_article(article *art_ptr);
+	void insert_article(article *art_ptr);
 
 	int get_index() const {
 		return index;

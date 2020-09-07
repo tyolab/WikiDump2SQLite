@@ -5,6 +5,11 @@
         "initializer_list": "c",
         "utility": "c",
         "instream_bz2_internals.h": "c",
-        "instream_bz2.h": "c"
+        "instream_bz2.h": "c",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp"
     }
 }

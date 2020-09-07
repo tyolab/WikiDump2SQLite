@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 
-int wiki_db_split::milestone = 20000;
+int wiki_db_split::milestone = 200000;
 const char *wiki_db_split::BASE_NAME_DEFAULT = "wikipedia.db";
 
 using namespace std;
@@ -66,7 +66,8 @@ void wiki_db_split::process(int thread_id) {
 //		for (int i = 0; i < 1000; ++i) {
 //			i + 1;
 //		}
-		db_ptr->update_article(art_ptr);
+		// should not update, should insert
+		db_ptr->insert_article(art_ptr);
 
 		if (count % 50000 == 0)
 			fprintf(stderr, "saved %d files into database\n", count);
@@ -129,7 +130,7 @@ void wiki_db_split::start(int id) {
 void wiki_db_split::load_db() {
 	create_main_db();
 
-	string db_name = increase_file_num(base_name);
+	string db_name = (base_name);
 	while (sys_file::exist(db_name.c_str())) {
 		wiki_db *db_ptr = new wiki_db(db_name.c_str());
 		dbs.push_back(db_ptr);

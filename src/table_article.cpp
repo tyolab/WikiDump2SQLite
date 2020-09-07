@@ -26,7 +26,7 @@ const std::string table_article::COLUMN_LAST_VISIT = "last_visit";
 const std::string table_article::COLUMN_CATEGORY = "category";
 const std::string table_article::COLUMN_REDIRECT = "redirect";
 
-const std::string table_article::SQL_INSERT = std::string("INSERT INTO ") +
+const std::string table_article::SQL_INSERT = std::string("INSERT OR REPLACE INTO ") +
 				TABLE_NAME  + " (" + /*COLUMN_ID + ", "
 											+ */COLUMN_ARTICLE_ID + ", "
 											+ COLUMN_TITLE  + ", "
@@ -34,7 +34,7 @@ const std::string table_article::SQL_INSERT = std::string("INSERT INTO ") +
 											+ COLUMN_ARTICLE + ", "
 											+ COLUMN_CATEGORY + ") VALUES (?, ?, ?, ?, ?)";
 
-const std::string table_article::SQL_INSERT_V2 = std::string("INSERT INTO ") +
+const std::string table_article::SQL_INSERT_V2 = std::string("INSERT OR REPLACE INTO ") +
 				TABLE_NAME  + " (" + /*COLUMN_ID + ", "
 											+ */COLUMN_ID + ", "
 											+ COLUMN_ARTICLE_ID  + ", "
@@ -206,7 +206,7 @@ int table_article::get_last_update() {
 }
 
 int table_article::get_max_article_id() {
-	return get_number_from_first_column("select max(article_id) from articles");
+	return get_number_from_first_column("select max(id) from articles");
 }
 
 int table_article::get_how_many_left() {

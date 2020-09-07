@@ -29,6 +29,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <exception>
 #include <cmath>
 #include <cassert>
@@ -134,7 +135,7 @@ int main(int argc, char **argv)
 		usage(argv[0]);
 	}
 
-	static const char *db_name = "./wikipedia.db";
+	static const char *db_name = "wikipedia.db";
 
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
 		fprintf(stderr, "\ncan't catch SIGINT\n");
@@ -153,6 +154,10 @@ int main(int argc, char **argv)
 
 	int use_provided_site = 0;
 
+	// by default we 
+	int batch_number = 100000;
+	int batch_id = -1;
+
 	for (; param < argc; ++param) {
 		char *opt;
 		if (argv[param][0] == '-') {
@@ -169,7 +174,7 @@ int main(int argc, char **argv)
 				++param;
 				int num = atoi(argv[param]);
 				if (num > 0)
-					wiki_db_split::milestone = num * 10000;
+					wiki_db_split::milestone = num;
 			}
 			else if (strcmp(opt, "fix") == 0) {
 				wiki_db::set_fix_mode(1);
@@ -188,7 +193,13 @@ int main(int argc, char **argv)
 				++param;
 				string root = argv[param];
 				wiki_api::root = root;
-			}			
+			}
+			else if (strcmp(opt, "batch") == 0) {
+				++param;
+				int num = atoi(argv[param]);
+				if (num >= 0)
+					batch_id = num;
+			}		
 			else {
 				fprintf(stderr, "unknown option: %s \n", argv[param]);
 				usage(argv[0]);
@@ -229,8 +240,20 @@ int main(int argc, char **argv)
 	else
 		usage(argv[0]);
 
+	// the basename will remain
+	std::string basename;
 	if (param < argc)
 		dbs.set_base_name(argv[param]);
+	else {
+		if (batch_id > -1) {
+			stringstream ss;
+			ss << "wikipedia";
+			ss << batch_id << ".db";
+			basename = ss.str();
+
+			dbs.set_base_name(basename.c_str());
+		}			
+	}
 
 	if (wiki_db::get_fix_mode())
 		dbs.set_up_to(-1);
@@ -312,6 +335,15 @@ int main(int argc, char **argv)
 
 		// could be zero
 		int where_we_stop = dbs.where_we_stop();
+		if (batch_id >=0 ) {
+			int from = batch_number * batch_id + 1;
+			int to = batch_number * (batch_id + 1);
+			if (where_we_stop < from || where_we_stop > to)
+				where_we_stop = to;
+
+			if (where_we_up_to < from)
+				where_we_up_to = from;
+		}
 
 //		if (fix_mode && where_we_up_to == dbs.get_current_db()->get_min())
 //			fix_mode = false;
