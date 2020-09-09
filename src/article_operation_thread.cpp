@@ -102,6 +102,7 @@ void article_operation_thread::process_article(article* art_ptr) {
 
 	if (article.length() == 0 || article.find("\"Error\":") != std::string::npos || article.find("\{\"error") != std::string::npos) {
 		std::cerr << "ERROR:" << art_ptr->get_article_id() << ":" << art_ptr->get_title() << std::endl;
+		std::cerr << article.substr(0, 500) << endl;
 		art_ptr->set_result(0);
 	}
 	else {

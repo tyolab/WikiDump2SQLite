@@ -83,6 +83,7 @@ string temp_path = "/tmp";
 string import_db;
 string import_cmd_suffix = "php importDump.php ";
 string lang;
+static const char *name = "mediawiki-import-dump";
 
 //class import_job : public task_thread {
 //
@@ -151,9 +152,8 @@ void compress_split(char *source, char *dest, unsigned long buffer_size, unsigne
 }
 
 tyo::file* init_file(int thread_id) {
-	static const char *name = "mediawiki-import-dump";
 	stringstream name_str;
-	name_str << temp_path << "/" << (name) << thread_id << ".xml";
+	name_str << temp_path << "/" << (name) << "-" << lang << "-" << thread_id << ".xml";
 
 	tyo::file* file = new tyo::file();
 	file->open(name_str.str().c_str(), "w");

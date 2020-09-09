@@ -215,6 +215,7 @@ int main(int argc, char **argv)
 
 	int file_count = 0;
 	int article_count = 0;
+	string lang("en");
 
 	if (param < argc) {
 		title_file = argv[param++];
@@ -222,9 +223,10 @@ int main(int argc, char **argv)
 		char *file = basename(tmp);
 		char *pos = strchr(file, '-');
 
+		std::string root = string(file, pos - file);
+		lang = root.substr(0, root.size() - 4);
+
 		if (!use_provided_site) {
-			std::string root = string(file, pos - file);
-			std::string lang = root.substr(0, root.size() - 4);
 			if (use_wikipedia) {
 				wiki_api::root = "wiki";
 				wiki_api::host = std::string("https://") + lang + ".wikipedia.org/";
@@ -239,6 +241,8 @@ int main(int argc, char **argv)
 	}
 	else
 		usage(argv[0]);
+
+	cout << "Wikipedia lang: " << lang << endl;
 
 	// the basename will remain
 	std::string basename;

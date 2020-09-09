@@ -13,6 +13,9 @@
 
 #include <string>
 
+#include <stdexcept>
+#include <iostream>
+
 using namespace std;
 
 int wiki_api::count = 0;
@@ -44,14 +47,22 @@ wiki_api::~wiki_api() {
 
 std::string wiki_api::get_wiki_page(const char* title) {
 	char *encoded = url_encode(title);
-	std::string url = url_template + url_encode(title);
-
-	string page = wget.retrieve(url.c_str());
-
+	std::string url = url_template + encoded;
 	free(encoded);
 
-//	if (wget.get_response_code() != 200)
-//		return ""; // don't do this, maybe page = "";
+	string page = wget.retrieve(url.c_str());
+	int response_code = wget.get_response_code();
+
+	if (response_code >= 500) {
+		cerr << page << endl;
+		throw std::runtime_error("couldn't get the article, web server may need to be restarted");
+	}
+	else if (response_code != 200) {
+		cerr << "Title: " << title << endl;
+		cerr << "Url: " << url << endl;
+		cerr << "Response code: " << response_code << endl;
+		return ""; 
+	}
 
 	return page;
 }

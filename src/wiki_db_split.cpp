@@ -67,7 +67,8 @@ void wiki_db_split::process(int thread_id) {
 //			i + 1;
 //		}
 		// should not update, should insert
-		db_ptr->insert_article(art_ptr);
+		if (art_ptr->get_result())
+			db_ptr->insert_article(art_ptr);
 
 		if (count % 50000 == 0)
 			fprintf(stderr, "saved %d files into database\n", count);

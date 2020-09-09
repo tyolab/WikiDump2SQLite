@@ -89,8 +89,8 @@ const char *webpage_retriever::ERROR_PAGE = "<html><title>Error</title><body>Int
 	}
 
 int webpage_retriever::get_response_code() {
-	int response_code = 0;
-	curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
+	// int response_code = 0;
+	// curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &response_code);
 	return response_code;
 }
 
@@ -105,6 +105,8 @@ void webpage_retriever::free_chunk()
 
 	char *webpage_retriever::retrieve(const char *url, int *this_response_code)
 	{
+		response_code = 200;
+		
 		free_chunk();
 
 	  /* specify URL to get */

@@ -43,6 +43,26 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "Dump2db (ZH) - Get all Wikipedia pages and save them into sqlite db",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/dump2db",
+            "args": ["-thread", "12", "-milestone", "100", "-batch", "0", "-wikisite", "http://zhwiki.tyo.com.au", "-wikiroot", "/wiki/", "../zhwiki-20200701-pages-articles.xml.bz2"],
+            "stopAtEntry": false,
+            //"cwd": "${workspaceFolder}",
+            "cwd": "/data4/wikipedia/zhwiki/2020",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
